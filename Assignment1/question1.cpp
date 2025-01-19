@@ -3,7 +3,7 @@
 
 float BuyOnePotato(double price, int numOfPotatoes) {
     if (numOfPotatoes > 0) {
-        int * pNumOfPotatoes = &numOfPotatoes; 
+        int * pNumOfPotatoes = &numOfPotatoes; // this doesn't work as this is a local copy of numOfPotatoes 
         --(*pNumOfPotatoes);  
         return price * 1.13;
     } 

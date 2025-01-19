@@ -11,4 +11,11 @@ int main() {
     std::cout << potatoes_available << std::endl << std::endl;
     std::cout << "$" << BuyNumPotatoes(potato_price, potatoes_available, 3) << std::endl;
     std::cout << potatoes_available << std::endl;
+
+    Birthday kid1;
+    int * day; 
+    int * month; 
+    int * year; 
+    kid1.randomBirthday(day, month, year); 
+    std::cout << day <<  "/" << month << "/" << year << std::endl; 
 }
