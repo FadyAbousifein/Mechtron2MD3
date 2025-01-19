@@ -1,4 +1,4 @@
 #pragma once 
 
-double BuyOnePotato(double price, int numOfPotatoes);
-double BuyNumPotatoes(double price, int numOfPotatoes, int numOfPurchases); 
+float BuyOnePotato(double price, int numOfPotatoes);
+float BuyNumPotatoes(double price, int numOfPotatoes, int numOfPurchases); 

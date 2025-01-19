@@ -1,9 +1,10 @@
 #include "assignment1.h"
 #include <iostream>
 
-double BuyOnePotato(double price, int numOfPotatoes) {
+float BuyOnePotato(double price, int numOfPotatoes) {
     if (numOfPotatoes > 0) {
-        --numOfPotatoes;  
+        int * pNumOfPotatoes = &numOfPotatoes; 
+        --(*pNumOfPotatoes);  
         return price * 1.13;
     } 
     else {
@@ -12,9 +13,10 @@ double BuyOnePotato(double price, int numOfPotatoes) {
     }
 }
 
-double BuyNumPotatoes(double price, int numOfPotatoes, int numOfPurchases) {
+float BuyNumPotatoes(double price, int numOfPotatoes, int numOfPurchases) {
     if (numOfPotatoes > 0) {
-        numOfPotatoes -= numOfPurchases; 
+        int * pNumOfPotatoes = &numOfPotatoes; 
+        (*pNumOfPotatoes) -= numOfPurchases; 
         return price * numOfPurchases * 1.13; 
     } else {
         std::cout << "No more potatoes available\n";
