@@ -1,7 +1,14 @@
-#include <stdio.h> 
+#include <iostream> 
 #include "assignment1.h"
 
 // main function will contain and run test cases 
 int main() {
-    printf("%d", BuyOnePotato(30.0, 11)); 
+    // printf("%lf", BuyOnePotato(353.0, 90)); 
+    //printf("%lf", BuyNumPotatoes(30, 0, 5));
+    int potatoes_available = 20;
+    double potato_price = 30.0;
+    std::cout << "$" << BuyOnePotato(potato_price, potatoes_available) << std::endl;
+    std::cout << potatoes_available << std::endl << std::endl;
+    std::cout << "$" << BuyNumPotatoes(potato_price, potatoes_available, 3) << std::endl;
+    std::cout << potatoes_available << std::endl;
 }
