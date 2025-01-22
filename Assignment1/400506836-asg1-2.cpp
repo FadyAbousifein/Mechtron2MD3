@@ -63,7 +63,7 @@ int main() {
 
         // for each n, 100 experiments are ran in which new random birthdays are generated 
         for (int i = 0; i < 100; i++) {
-            BirthdayParadox bParadox = BirthdayParadox(n); 
+            BirthdayParadox bParadox(n); 
             
             // checks for duplicate birthdays
             if (bParadox.CheckDuplicates(bParadox.birthdays, n)) {
