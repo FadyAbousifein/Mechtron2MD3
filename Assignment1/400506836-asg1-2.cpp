@@ -42,7 +42,7 @@ class BirthdayParadox {
         int CheckDuplicates(Birthday * birthdays, int n) {
             for (int i = 0; i < n; i++) {
                 for (int j = i + 1; j < n; j++) {
-                    if (&birthdays[i] == &birthdays[j]) {
+                    if (&(birthdays[i]) == &(birthdays[j])) {
                         return 1;  
                     } 
                 }
@@ -59,8 +59,15 @@ int main() {
 
         for (int i = 0; i < 100; i++) {
             BirthdayParadox bParadox = BirthdayParadox(n); 
+            
+            if (bParadox.CheckDuplicates(bParadox.birthdays, n)) {
+                dupes++; 
+            }
         }
+        
+        std::cout << n << "," << dupes << "," <<  dupes/100 << std::endl; 
     }
+    return EXIT_SUCCESS; 
 }
 
 
