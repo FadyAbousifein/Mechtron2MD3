@@ -1,16 +1,19 @@
 #include <cstdlib>
 #include <iostream>
 
+// template with two types involved
 template <typename T1, typename T2> 
 class Pair {
     public:
         T1 type1; 
         T2 type2; 
 
+        // prints desired output 
         void print() {
             std::cout << "<" << type1 << ", " << type2 << ">" << std::endl; 
         }
 
+        // constructor initializes the type1 and 2 variables to whatever user passes in
         Pair(T1 type1, T2 type2) {
             this->type1 = type1;
             this->type2 = type2; 

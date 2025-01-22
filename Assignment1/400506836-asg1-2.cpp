@@ -16,7 +16,7 @@ class Birthday {
 
         // overloads == operator to check whether birthdays are equal
         bool operator == (Birthday * birthday) {
-            if (day == birthday->day && month == birthday-> month ) {
+            if (day == birthday->day && month == birthday->month ) {
                 return true;  
             } else return false; 
         }
@@ -30,9 +30,8 @@ class BirthdayParadox {
         // constructor creates n birthdays with a random date
         BirthdayParadox(int n) : num_people(n) {
             birthdays = new Birthday[num_people]; 
-            
+
             for (int i = 0; i < num_people; i++) {
-                birthdays[i] = Birthday(); 
                 birthdays[i].randomDate(); 
             }
         } 
