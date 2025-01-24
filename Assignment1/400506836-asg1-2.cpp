@@ -10,8 +10,19 @@ class Birthday {
 
         // generates random birthday 
         void randomDate() {
-            day = (rand() % 31) + 1; // 1 - 31
-            month = (rand() % 12) + 1; // 1 - 12 
+            month = (rand() % 12) + 1;  // 1 - 12
+
+            switch (month) {
+                case 2: 
+                    day = (rand() % 28) + 1;  // feb is only 28 days
+                    break;
+                case 4: case 6: case 9: case 11:  
+                    day = (rand() % 30) + 1;
+                    break;
+                default:  
+                    day = (rand() % 31) + 1;
+                    break;
+            }
         }
 
         // overloads == operator to check whether birthdays are equal

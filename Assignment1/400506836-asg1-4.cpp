@@ -7,18 +7,21 @@ class AbsProgression {
         int first; 
         int second;
 
+        // default constructor 
         AbsProgression() {
             first = 2; 
             second = 200; 
             printProgression(10);
         }
 
+        // custom constructor 
         AbsProgression(int first, int second) {
             this->first = first;
             this->second = second; 
             printProgression(10);
         }
 
+        // finds the next number in the sequence and shifts the first and second values 
         int nextNum() {
             int nextNum = abs(second - first); 
             first = second; 
@@ -26,6 +29,7 @@ class AbsProgression {
             return nextNum; 
         }
 
+        // prints the sequence progression for the first 10 numbers
         void printProgression(int n) {
             std::cout << first << " " << second << " "; 
             for (int i = 0; i < 8; i++) {
