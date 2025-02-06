@@ -14,7 +14,15 @@ class DLinkedList {  // doubly linked list
     public:
         DLinkedList();                 // constructor
         ~DLinkedList();                // destructor
-        int Size(); 
+        bool empty() const;            // is list empty?
+        const std::string& front() const;     // get front element
+        const std::string& back() const;      // get back element
+        void addFront(const Elem& e);  // add to front of list
+        void addBack(const Elem& e);   // add to back of list
+        void removeFront();            // remove from front
+        void removeBack();           
+        int Size();
+        int recursiveSize(Node * current); 
 
     private:                        // local type definitions
         Node* header;                 // list sentinels
@@ -43,24 +51,12 @@ DLinkedList::~DLinkedList() {  // destructor
 }
 
 int DLinkedList::Size() {
-    if (header->next == trailer) return 0; 
-    
-    std::string firstName = header->next->name; 
-    int firstScore = header->next->score; 
+    return recursiveSize(header->next); 
+}
 
-    header = header->next; 
-    int i = Size() + 1; 
-
-    Node * first = new Node; 
-    first->name = firstName; 
-    first->score = firstScore; 
-    first->next = header->next;
-    first->prev = header; 
-
-    header->next->prev = first; 
-    header->next = first; 
-
-    return i; 
+int DLinkedList::recursiveSize(Node * current) {
+    if (current == trailer) return 0; 
+    return 1 + recursiveSize(current->next); 
 }
 
 
