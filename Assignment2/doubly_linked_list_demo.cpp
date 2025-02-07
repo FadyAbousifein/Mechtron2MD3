@@ -15,12 +15,6 @@ class DLinkedList {  // doubly linked list
         DLinkedList();                 // constructor
         ~DLinkedList();                // destructor
         bool empty() const;            // is list empty?
-        const std::string& front() const;     // get front element
-        const std::string& back() const;      // get back element
-        void addFront(const std::string& e);  // add to front of list
-        void addBack(const std::string& e);   // add to back of list
-        void removeFront();            // remove from front
-        void removeBack();           
         
         // part A
         int Size();
@@ -34,7 +28,6 @@ class DLinkedList {  // doubly linked list
 
         // part D 
         bool UpdateScore(std::string name, int score); 
-
 
         // part E
         void Print(); 
@@ -62,8 +55,6 @@ class DLinkedList {  // doubly linked list
     private:                        
         Node* header;                 
         Node* trailer;
-        void add(Node* v, const std::string& value);  
-        void remove(Node* v); 
 };
 
 DLinkedList::DLinkedList() {  // constructor
@@ -86,17 +77,17 @@ DLinkedList::~DLinkedList() {  // destructor
     delete trailer; 
 }
 
-int DLinkedList::Size() {
+int DLinkedList::Size() {  // part A
     return recursiveSize(header->next); 
 }
 
-int DLinkedList::recursiveSize(Node * current) {
+int DLinkedList::recursiveSize(Node * current) {  // part A
     if (current == trailer) return 0;
     if (current->score == 0) return recursiveSize(current->next); 
     return 1 + recursiveSize(current->next); 
 }
 
-void DLinkedList::AddScoreInOrder(std::string name, int score) {
+void DLinkedList::AddScoreInOrder(std::string name, int score) {  // part B
     Node * newNode = new Node; 
     newNode->name = name; 
     newNode->score = score; 
@@ -113,7 +104,7 @@ void DLinkedList::AddScoreInOrder(std::string name, int score) {
     current->prev = newNode; 
 }
 
-void DLinkedList::RemoveScore(int index) {
+void DLinkedList::RemoveScore(int index) {  // part C
     if (index < 0 || index >= Size()) return; 
 
     Node * current = header->next; 
@@ -129,7 +120,7 @@ void DLinkedList::RemoveScore(int index) {
     delete temp; 
 }
 
-bool DLinkedList::UpdateScore(std::string name, int score) {
+bool DLinkedList::UpdateScore(std::string name, int score) {  // part D
     Node * current = header->next; 
 
     while (current != trailer) {
@@ -143,11 +134,11 @@ bool DLinkedList::UpdateScore(std::string name, int score) {
     return false; 
 }
 
-void DLinkedList::Print() {
+void DLinkedList::Print() {  // part E
     recursivePrint(header->next);
 }
 
-void DLinkedList::recursivePrint(Node * current) {
+void DLinkedList::recursivePrint(Node * current) {  // part E
     if (current == trailer) return; 
 
     std::cout << "{" << current->name << "," << current->score << "}";
@@ -157,7 +148,7 @@ void DLinkedList::recursivePrint(Node * current) {
     recursivePrint(current->next); 
 }
 
-DLinkedList::DLinkedList(const DLinkedList& oldList) {
+DLinkedList::DLinkedList(const DLinkedList& oldList) {  // part F
     header = new Node; 
     trailer = new Node; 
     header->next = trailer; 
@@ -170,20 +161,18 @@ DLinkedList::DLinkedList(const DLinkedList& oldList) {
     }
 }
 
-
-void DLinkedList::addBackWithScore(const std::string& name, int score) {
+void DLinkedList::addBackWithScore(const std::string& name, int score) {  // part F
     Node* newNode = new Node;
     newNode->name = name;
     newNode->score = score;
 
-    // Insert newNode at the end (before trailer)
     newNode->next = trailer;
     newNode->prev = trailer->prev;
     trailer->prev->next = newNode;
     trailer->prev = newNode;
 }
 
-DLinkedList& DLinkedList::operator=(const DLinkedList& oldList) {
+DLinkedList& DLinkedList::operator=(const DLinkedList& oldList) {  // part G
     if (this == &oldList) return *this; 
 
     while (!empty()) removeFront(); 
@@ -197,7 +186,7 @@ DLinkedList& DLinkedList::operator=(const DLinkedList& oldList) {
     return *this; 
 } 
 
-void DLinkedList::OrderByName() {
+void DLinkedList::OrderByName() {  // part H
     if (header->next == trailer || header->next->next == trailer) return;
 
     Node * current = header->next->next; 
@@ -225,8 +214,7 @@ void DLinkedList::OrderByName() {
     }
 }
 
-void DLinkedList::OrderByScore() {
-     
+void DLinkedList::OrderByScore() {  // part I
     if (header->next == trailer || header->next->next == trailer) return;
 
     Node * current = header->next; 
@@ -251,8 +239,7 @@ void DLinkedList::OrderByScore() {
     }
 }
 
-// the list being appended will be empty after the process 
-void DLinkedList::Append(DLinkedList & L) {
+void DLinkedList::Append(DLinkedList & L) {  // part J
     if (L.empty()) return; 
     
     Node * lastCurrent = trailer->prev; 
@@ -269,11 +256,9 @@ void DLinkedList::Append(DLinkedList & L) {
     L.trailer->prev = L.header; 
 }
 
-void DLinkedList::Reverse() {
-    // Temporary list that's a copy of the current list
+void DLinkedList::Reverse() {  // part K
     DLinkedList temporary = *this;
 
-    // Empty the current list
     Node* current = header->next;
     while (current != trailer) {
         Node* next = current->next;
@@ -283,105 +268,25 @@ void DLinkedList::Reverse() {
     header->next = trailer;
     trailer->prev = header;
 
-    // Set a pointer to the trailer of the temporary list and copy the values to the current list
     Node* currentNew = temporary.trailer->prev;
     Node* thisPos = header;
 
     while (currentNew != temporary.header) {
-        // Create a new node with the same values as the current node
         Node* newNode = new Node;
         newNode->name = currentNew->name;
         newNode->score = currentNew->score;
 
-        // Insert the new node before the trailer
         newNode->next = trailer;
         newNode->prev = thisPos;
         thisPos->next = newNode;
         trailer->prev = newNode;
 
-        // Move to the previous node in the temporary list
         currentNew = currentNew->prev;
         thisPos = newNode;
     }
 }
 
-
-
 bool DLinkedList::empty() const {  // is list empty?
   return (header->next == trailer);
 }
 
-const std::string& DLinkedList::front() const {  // get front element
-  return header->next->name;
-}
-
-const std::string& DLinkedList::back() const {  // get back element
-  return trailer->prev->name;
-}
-
-void DLinkedList::add(Node* v, const std::string& value) {
-  Node* newNode = new Node;
-  newNode->name = value;
-  newNode->next = v->next;
-  newNode->prev = v;
-  v->next->prev = newNode;
-  v->next = newNode;
-}
-
-void DLinkedList::addFront(const std::string& e) {  // add to front of list
-  add(header, e);
-}
-
-void DLinkedList::addBack(const std::string& e) {  // add to back of list
-  add(trailer->prev, e);
-}
-
-void DLinkedList::remove(Node* v) {  // remove node v
-  Node* u = v->prev;                 // predecessor
-  Node* w = v->next;                 // successor
-  u->next = w;                        // unlink v from list
-  w->prev = u;
-  delete v;
-}
-
-void DLinkedList::removeFront() {  // remove from front
-  remove(header->next);
-}
-
-void DLinkedList::removeBack() {  // remove from back
-  remove(trailer->prev);
-}
-
-void listReverse(DLinkedList& L) {  // reverse a list
-  DLinkedList T;                    // temporary list
-  while (!L.empty()) {              // reverse L into T
-    std::string s = L.front();
-    L.removeFront();
-    T.addFront(s);
-  }
-  while (!T.empty()) {  // copy T back to L
-    std::string s = T.front();
-    T.removeFront();
-    L.addBack(s);
-  }
-}
-int main() {
-    DLinkedList dll;
-
-    // Add some scores in order
-    dll.AddScoreInOrder("Alice", 90);
-    dll.AddScoreInOrder("Bob", 85);
-    dll.AddScoreInOrder("Charlie", 95);
-    dll.AddScoreInOrder("David", 80);
-
-    std::cout << "Original List (sorted by score): ";
-    dll.Print();  // Print the list before reversing
-
-    // Reverse the list (this will reverse the order of scores and names)
-    dll.Reverse();
-    
-    std::cout << "\nReversed List (sorted by score): ";
-    dll.Print();  // Print the list after reversing
-
-    return 0;
-}
