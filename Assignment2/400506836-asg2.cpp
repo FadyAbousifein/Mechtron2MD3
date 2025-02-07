@@ -15,6 +15,12 @@ class DLinkedList {  // doubly linked list
         DLinkedList();                 // constructor
         ~DLinkedList();                // destructor
         bool empty() const;            // is list empty?
+        const std::string& front() const;     // get front element
+        const std::string& back() const;      // get back element
+        void addFront(const std::string& e);  // add to front of list
+        void addBack(const std::string& e);   // add to back of list
+        void removeFront();            // remove from front
+        void removeBack();           
         
         // part A
         int Size();
@@ -55,6 +61,8 @@ class DLinkedList {  // doubly linked list
     private:                        
         Node* header;                 
         Node* trailer;
+        void add(Node* v, const std::string& value);  
+        void remove(Node* v); 
 };
 
 DLinkedList::DLinkedList() {  // constructor
@@ -269,7 +277,7 @@ void DLinkedList::Reverse() {  // part K
     trailer->prev = header;
 
     Node* currentNew = temporary.trailer->prev;
-    Node* thisPos = header;
+    Node* position = header;
 
     while (currentNew != temporary.header) {
         Node* newNode = new Node;
@@ -277,16 +285,17 @@ void DLinkedList::Reverse() {  // part K
         newNode->score = currentNew->score;
 
         newNode->next = trailer;
-        newNode->prev = thisPos;
-        thisPos->next = newNode;
+        newNode->prev = position;
+        position->next = newNode;
         trailer->prev = newNode;
 
         currentNew = currentNew->prev;
-        thisPos = newNode;
+        position= newNode;
     }
 }
 
 bool DLinkedList::empty() const {  // is list empty?
   return (header->next == trailer);
 }
+
 
