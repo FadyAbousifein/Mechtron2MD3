@@ -270,8 +270,40 @@ void DLinkedList::Append(DLinkedList & L) {
 }
 
 void DLinkedList::Reverse() {
-}
+    // Temporary list that's a copy of the current list
+    DLinkedList temporary = *this;
 
+    // Empty the current list
+    Node* current = header->next;
+    while (current != trailer) {
+        Node* next = current->next;
+        delete current;
+        current = next;
+    }
+    header->next = trailer;
+    trailer->prev = header;
+
+    // Set a pointer to the trailer of the temporary list and copy the values to the current list
+    Node* currentNew = temporary.trailer->prev;
+    Node* thisPos = header;
+
+    while (currentNew != temporary.header) {
+        // Create a new node with the same values as the current node
+        Node* newNode = new Node;
+        newNode->name = currentNew->name;
+        newNode->score = currentNew->score;
+
+        // Insert the new node before the trailer
+        newNode->next = trailer;
+        newNode->prev = thisPos;
+        thisPos->next = newNode;
+        trailer->prev = newNode;
+
+        // Move to the previous node in the temporary list
+        currentNew = currentNew->prev;
+        thisPos = newNode;
+    }
+}
 
 
 
