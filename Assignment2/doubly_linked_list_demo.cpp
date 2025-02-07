@@ -270,25 +270,7 @@ void DLinkedList::Append(DLinkedList & L) {
 }
 
 void DLinkedList::Reverse() {
-    if (header->next == trailer || header->next->next == trailer) return; 
-
-    Node * current = header->next; 
-    Node * temp = NULL; 
-
-    while (current != trailer) {
-        temp = current->next; 
-        current->next = current->prev; 
-        current->prev = temp; 
-        current = temp;
-    }
-
-    temp = header; 
-    header = trailer; 
-    trailer = temp; 
 }
-
-
-
 
 
 
