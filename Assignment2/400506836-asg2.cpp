@@ -85,6 +85,7 @@ DLinkedList::~DLinkedList() {  // destructor
     delete trailer; 
 }
 
+// recursivley count nodes with score
 int DLinkedList::Size() {  // part A
     return recursiveSize(header->next); 
 }
@@ -95,6 +96,7 @@ int DLinkedList::recursiveSize(Node * current) {  // part A
     return 1 + recursiveSize(current->next); 
 }
 
+// insert node in sorted order by score 
 void DLinkedList::AddScoreInOrder(std::string name, int score) {  // part B
     Node * newNode = new Node; 
     newNode->name = name; 
@@ -102,25 +104,30 @@ void DLinkedList::AddScoreInOrder(std::string name, int score) {  // part B
 
     Node * current = header->next; 
 
+    // find insertion point
     while (current != trailer && current->score > score) {
         current = current->next; 
     }
 
+    // insert node before 'current'
     newNode->next = current; 
     newNode->prev = current->prev; 
     current->prev->next = newNode; 
     current->prev = newNode; 
 }
 
+// remove node at index 
 void DLinkedList::RemoveScore(int index) {  // part C
     if (index < 0 || index >= Size()) return; 
 
     Node * current = header->next; 
 
+    // find node 
     for (int i = 0; i < index; i++) {
         current = current->next; 
     }
     
+    // alter pointers and free memory
     Node * temp = current; 
     current->prev->next = current->next; 
     current->next->prev = current->prev; 
@@ -128,9 +135,12 @@ void DLinkedList::RemoveScore(int index) {  // part C
     delete temp; 
 }
 
+
+// update score by name
 bool DLinkedList::UpdateScore(std::string name, int score) {  // part D
     Node * current = header->next; 
 
+    // find name and update score
     while (current != trailer) {
         if (current->name == name) {
             current->score = score; 
@@ -139,9 +149,10 @@ bool DLinkedList::UpdateScore(std::string name, int score) {  // part D
         current = current->next; 
     }
 
-    return false; 
+    return false; // name not found 
 }
 
+// recursivley print list 
 void DLinkedList::Print() {  // part E
     recursivePrint(header->next);
 }
@@ -156,12 +167,15 @@ void DLinkedList::recursivePrint(Node * current) {  // part E
     recursivePrint(current->next); 
 }
 
+// copy constructor 
 DLinkedList::DLinkedList(const DLinkedList& oldList) {  // part F
+    // initialize new list properties 
     header = new Node; 
     trailer = new Node; 
     header->next = trailer; 
     trailer->prev = header; 
 
+    // copy oldList to new list 
     Node * current = oldList.header->next; 
     while (current != oldList.trailer) {
         addBackWithScore(current->name, current->score); 
@@ -169,6 +183,7 @@ DLinkedList::DLinkedList(const DLinkedList& oldList) {  // part F
     }
 }
 
+// same as addBack I just made it also take in a score 
 void DLinkedList::addBackWithScore(const std::string& name, int score) {  // part F
     Node* newNode = new Node;
     newNode->name = name;
@@ -180,13 +195,15 @@ void DLinkedList::addBackWithScore(const std::string& name, int score) {  // par
     trailer->prev = newNode;
 }
 
+// overload = operator 
 DLinkedList& DLinkedList::operator=(const DLinkedList& oldList) {  // part G
-    if (this == &oldList) return *this; 
+    if (this == &oldList) return *this; // same list case
 
     while (!empty()) removeFront(); 
 
     Node * current = oldList.header->next; 
 
+    // oldList elements coppied to newList
     while (current != oldList.trailer) {
         AddScoreInOrder(current->name, current->score); 
         current = current->next; 
@@ -194,26 +211,32 @@ DLinkedList& DLinkedList::operator=(const DLinkedList& oldList) {  // part G
     return *this; 
 } 
 
+// sort by alphabetical order
 void DLinkedList::OrderByName() {  // part H
+    // one or zero nodes need not to be sorted
     if (header->next == trailer || header->next->next == trailer) return;
 
     Node * current = header->next->next; 
 
+    // traverse list
     while (current != trailer) {
         Node * temp = current; 
         current = current->next; 
 
         Node * iteration = header->next; 
+        // swap order depending on alphebtical presedence
         while (iteration != trailer && iteration->name < temp->name) {
             iteration = iteration->next; 
         }
 
+        // rearrange pointers 
         if (iteration != temp) {
             temp->prev->next = temp->next; 
             if (temp->next != trailer) {
                 temp->next->prev = temp->prev; 
             }
 
+            // set pointers up for next iteration 
             temp->next = iteration; 
             temp->prev = iteration->prev; 
             iteration->prev->next = temp; 
@@ -222,13 +245,18 @@ void DLinkedList::OrderByName() {  // part H
     }
 }
 
+
+// order by score low - high
 void DLinkedList::OrderByScore() {  // part I
+    // 0 or 1 node list need not be ordered 
     if (header->next == trailer || header->next->next == trailer) return;
 
     Node * current = header->next; 
     Node * temp = header;
 
+    // traverse list
     while (current != trailer) {
+        // insertion sort 
         Node * temp = current->next; 
 
         current->prev->next = current->next; 
@@ -247,13 +275,16 @@ void DLinkedList::OrderByScore() {  // part I
     }
 }
 
+// append list to list 
 void DLinkedList::Append(DLinkedList & L) {  // part J
-    if (L.empty()) return; 
+    if (L.empty()) return; // empty list 
     
+    // L refers to the passed in list parameters
     Node * lastCurrent = trailer->prev; 
     Node * firstL = L.header->next; 
     Node * lastL = L.trailer->prev; 
 
+    // the list being appended to the larger list will become empty 
     lastCurrent->next = firstL; 
     firstL->prev = lastCurrent; 
 
@@ -264,9 +295,11 @@ void DLinkedList::Append(DLinkedList & L) {  // part J
     L.trailer->prev = L.header; 
 }
 
+// reverse list nodes 
 void DLinkedList::Reverse() {  // part K
-    DLinkedList temporary = *this;
+    DLinkedList temporary = *this; // copy of list 
 
+    // empty current list 
     Node* current = header->next;
     while (current != trailer) {
         Node* next = current->next;
@@ -276,9 +309,11 @@ void DLinkedList::Reverse() {  // part K
     header->next = trailer;
     trailer->prev = header;
 
+    // copy values to current list 
     Node* currentNew = temporary.trailer->prev;
     Node* position = header;
 
+    // insert the new nodes in proper order into the new list 
     while (currentNew != temporary.header) {
         Node* newNode = new Node;
         newNode->name = currentNew->name;
