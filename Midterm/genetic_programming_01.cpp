@@ -442,39 +442,39 @@ void LinkedBinaryTree::addSubtreeMutator(mt19937& rng, const int maxDepth) {
     int top_of_deletion_stack = -1;
     int depth_of_leaf = random_node_to_replace->depth(); 
 
-    // Push the root of the new subtree onto the stack
+    // root of new subtree to stack 
     temp_deletion_stack[++top_of_deletion_stack] = {root_of_subtree, depth_of_leaf + 1};
 
     while (top_of_deletion_stack >= 0) {
-        StackNode current = temp_deletion_stack[top_of_deletion_stack--];
-        Node* currentNode = current.node;
-        int currentDepth = current.depth;
+        StackNode current_stack_node = temp_deletion_stack[top_of_deletion_stack--];
+        Node* current_node_of_interest = current_stack_node.node;
+        int depth_of_current_node_of_interest = current_stack_node.depth;
 
-        // If the current node is an operator and we haven't reached max depth
-        if (isOp(currentNode->elt) && currentDepth < maxDepth) {
-            // Generate left child
-            Node* leftChild = new Node;
-            leftChild->elt = randChoice(rng) || currentDepth == maxDepth - 1
+        // current node = operator, thus max depth still has not been reached 
+        if (isOp(current_node_of_interest->elt) && depth_of_current_node_of_interest < maxDepth) {
+            // left child node 
+            Node* left_child = new Node;
+            left_child->elt = randChoice(rng) || depth_of_current_node_of_interest == maxDepth - 1
                 ? term_vec[randInt(rng, 0, term_vec.size() - 1)]
                 : operator_vec[randInt(rng, 0, operator_vec.size() - 1)];
-            leftChild->par = currentNode;
-            currentNode->left = leftChild;
+            left_child->par = current_node_of_interest;
+            current_node_of_interest->left = left_child;
 
-            // Generate right child if the operator is binary
-            if (arity(currentNode->elt) > 1) {
-                Node* rightChild = new Node;
-                rightChild->elt = randChoice(rng) || currentDepth == maxDepth - 1
+            // right child node (if binary operator)
+            if (arity(current_node_of_interest->elt) > 1) {
+                Node* right_child = new Node;
+                right_child->elt = randChoice(rng) || depth_of_current_node_of_interest == maxDepth - 1
                     ? term_vec[randInt(rng, 0, term_vec.size() - 1)]
                     : operator_vec[randInt(rng, 0, operator_vec.size() - 1)];
-                rightChild->par = currentNode;
-                currentNode->right = rightChild;
+                right_child->par = current_node_of_interest;
+                current_node_of_interest->right = right_child;
 
-                // Push right child onto the stack
-                temp_deletion_stack[++top_of_deletion_stack] = {rightChild, currentDepth + 1};
+                // push right to stack 
+                temp_deletion_stack[++top_of_deletion_stack] = {right_child, depth_of_current_node_of_interest + 1};
             }
 
-            // Push left child onto the stack
-            temp_deletion_stack[++top_of_deletion_stack] = {leftChild, currentDepth + 1};
+            // push left to stack 
+            temp_deletion_stack[++top_of_deletion_stack] = {left_child, depth_of_current_node_of_interest + 1};
         }
     }
 }
@@ -570,79 +570,79 @@ void evaluate(mt19937& rng, LinkedBinaryTree& t, const int& num_episode,
     t.setSteps(mean_steps / num_episode);
 }
 
-// Part 2: Question 1
+// Part 2 - Question 1, struct will perform lexicographic comparison of two trees based on the assignment conditions 
 struct LexLessThan {
     bool operator()(const LinkedBinaryTree& x, const LinkedBinaryTree& y) const {
-        double scoreDiff = fabs(x.getScore() - y.getScore());
-        if (scoreDiff < 0.01) {
-            // Favor simpler trees (fewer nodes) when scores are similar
-            return x.size() > y.size();
+        double difference_of_scores = fabs(x.getScore() - y.getScore());
+        if (difference_of_scores < 0.01) {
+            return x.size() > y.size(); // fewer nodes favoured 
         } else {
-            // Otherwise, compare by score
-            return x.getScore() < y.getScore();
+            return x.getScore() < y.getScore(); // score comparison 
         }
     }
 };
 
-// Part 3: Question 1
-// Perform crossover by swapping subtrees between two parent trees
+// Part 3 - Question 1, crossover operator which samples parents, creates two children by swapping random subtrees from each parent 
 std::pair<LinkedBinaryTree, LinkedBinaryTree> crossover(mt19937& rng, const LinkedBinaryTree& parent1, const LinkedBinaryTree& parent2) {
-    // Create deep copies of the parent trees
-    LinkedBinaryTree child1(parent1); // Copy constructor creates a deep copy
+    // deep copies 
+    LinkedBinaryTree child1(parent1); 
     LinkedBinaryTree child2(parent2);
 
-    // Collect all nodes in both child trees
-    LinkedBinaryTree::PositionList pl1 = child1.positions();
-    LinkedBinaryTree::PositionList pl2 = child2.positions();
+    // list of all nodes 
+    LinkedBinaryTree::PositionList node_list1 = child1.positions();
+    LinkedBinaryTree::PositionList node_list2 = child2.positions();
 
-    // Exit early if either tree only has a root or only 2 leaf nodes
-    if (pl1.size() <= 3 || pl2.size() <= 3) {
-        return {child1, child2}; // Return unmodified copies if crossover is not feasible
+    // either tree has only one root = exit 
+    if (node_list1.size() <= 3 || node_list2.size() <= 3) {
+        return {child1, child2}; 
     }
 
     // Randomly select a subtree from each child
-    int randomIndex1 = randInt(rng, 1, pl1.size() - 1);
-    int randomIndex2 = randInt(rng, 1, pl2.size() - 1);
+    int first_random_index = randInt(rng, 1, node_list1.size() - 1);
+    int second_random_index = randInt(rng, 1, node_list2.size() - 1);
 
-    LinkedBinaryTree::Node* subtree1 = pl1[randomIndex1].v;
-    LinkedBinaryTree::Node* subtree2 = pl2[randomIndex2].v;
+    LinkedBinaryTree::Node* subtree1 = node_list1[first_random_index].v;
+    LinkedBinaryTree::Node* subtree2 = node_list2[second_random_index].v;
 
-    // Find the parent nodes of the selected subtrees
-    LinkedBinaryTree::Node* parentOfSubtree1 = subtree1->par;
-    LinkedBinaryTree::Node* parentOfSubtree2 = subtree2->par;
+    // determine parents of random sub trees 
+    LinkedBinaryTree::Node* parent_of_subtree1 = subtree1->par;
+    LinkedBinaryTree::Node* parent_of_subtree2 = subtree2->par;
 
-    // Determine if the subtrees are left or right children of their parents
-    bool isSubtree1LeftChild = (parentOfSubtree1 && parentOfSubtree1->left == subtree1);
-    bool isSubtree2LeftChild = (parentOfSubtree2 && parentOfSubtree2->left == subtree2);
+    // are subtrees left or right children 
+    bool is_subtree1_a_left_child = (parent_of_subtree1 && parent_of_subtree1->left == subtree1);
+    bool is_subtree2_a_left_child = (parent_of_subtree2 && parent_of_subtree2->left == subtree2);
 
-    // Swap the subtrees
-    if (parentOfSubtree1) {
-        if (isSubtree1LeftChild) {
-            parentOfSubtree1->left = subtree2;
-        } else {
-            parentOfSubtree1->right = subtree2;
+    // swap subtrees 
+    if (parent_of_subtree1) {
+        if (is_subtree1_a_left_child) {
+            parent_of_subtree1->left = subtree2;
+        } 
+        else {
+            parent_of_subtree1->right = subtree2;
         }
-    } else {
-        // If subtree1 has no parent, it must be the root of child1
-        child1._root = subtree2; // Update the root pointer
+    } 
+    else {
+        // subtree1 no parent = subtree1 is root  
+        child1._root = subtree2;
     }
 
-    if (parentOfSubtree2) {
-        if (isSubtree2LeftChild) {
-            parentOfSubtree2->left = subtree1;
-        } else {
-            parentOfSubtree2->right = subtree1;
+    if (parent_of_subtree2) {
+        if (is_subtree2_a_left_child) {
+            parent_of_subtree2->left = subtree1;
+        } 
+        else {
+            parent_of_subtree2->right = subtree1;
         }
-    } else {
-        // If subtree2 has no parent, it must be the root of child2
-        child2._root = subtree1; // Update the root pointer
+    } 
+    else {
+        // subtree2 no parent = subtree2 is root 
+        child2._root = subtree1; 
     }
 
-    // Update the parent pointers of the swapped subtrees
-    subtree1->par = parentOfSubtree2;
-    subtree2->par = parentOfSubtree1;
+    // parent pointers of swap update 
+    subtree1->par = parent_of_subtree2;
+    subtree2->par = parent_of_subtree1;
 
-    // Return the modified child trees
     return {child1, child2};
 }
 
